@@ -1,0 +1,87 @@
+\chapter{Literature Review}\label{c:literature}
+
+\section{Optically measuring nerve activity based on an electro-optical detection system}
+An electro-optical detection system \cite{OptrodeProceesings} (shown in Figure \ref{fig_OptrodeFigure}) is proposed for nerve activity detection.  A superluminescent diode emits light to a circulator, which directs the light to a liquid crystal transducer.  The transducer receives nerve activity signal from the two electrodes.  This causes the change of liquid crystal angle, which then changes the reflection rate of the light.  Therefore, the nerve activity message is modulated to the light and the light is reflected to the circulator, which then directs the light to a photodiode light detector.  This detector converts the light signal to a current signal, and eventually the current signal is converted to digital data via an amplifier circuit and data acquisition equipment.  
+
+
+\section{Wiener filter}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[scale=0.5]{3-literature/Wiener_block.pdf}}
+\caption{Wiener filter block diagram}
+\label{fig_Wiener_block}
+\end{figure}
+
+To reduce the noise in the system, an active noise reduction algorithm is needed.  The wiener filter is one of the choices when dealing with two channel noise reduction.  A FIR wiener filter for discrete signals \cite{Wikipedia_2023} is shown in Figure \ref{fig_Wiener_block}, s[n] is a noise free signal, and w[n] is s[n] plus some noise.  G(z) is the wiener filter with ai being the filter coefficients.   W[n] is inputted to the filter, and x[n] is the filter output.  e[n] is the error between x[n] and s[n].  From this diagram, it can be derived that the mean square error is as follows:
+$E[e^2 [n]]=E[(x[n]-s[n])^2 ]$
+After some derivatives and calculations, an equation \cite{Wikipedia_2023} came out:
+
+
+\begin{gather} \label{eqn_WienerMatrix}
+\underbrace{
+    \begin{bmatrix}
+    R_w[0] & R_w[1] & \dots & R_w[N] \\
+    R_w[1] & R_w[0] & \dots & R_w[N-1] \\
+    \vdots & \vdots & \ddots & \vdots \\
+    R_w[N] & R_w[N-1] & \dots & R_w[0]
+    \end{bmatrix}
+}_{T}
+\underbrace{
+    \begin{bmatrix}
+    a_0 \\
+    a_1 \\
+    \dots \\
+    a_N
+    \end{bmatrix}
+}_{a}
+=
+\underbrace{
+    \begin{bmatrix}
+    R_{ws}[0] \\
+    R_{ws}[1] \\
+    \dots \\
+    R_{ws}[N]
+    \end{bmatrix}
+}_{v}
+\end{gather}
+
+In eqn~\ref{eqn_WienerMatrix} the matrix T is the autocorrelation of w[n], and inside the matrix v is the cross correlation of w[n] and s[n], where both w[n] and s[n] is known.  Therefore, both matrix T and v are known, so matrix a can be calculated, which is the filter coefficients.
+This method uses a noise free message signal s[n] and a noisy message signal w[n] as input, and the filter reduces the noise inside w[n].  This is different to how the noise reduction algorithm would work in this project.  From the optrode system, a noisy message signal and a pure noise signal can be extracted, while the pure noise signal is highly correlated to the noise inside the noise message signal.  To use the wiener filter, the pure noise signal can be the input w[n] and the noisy message signal can be the input s[n].  The output x[n] would be the correlated noise between the pure noise signal and the noisy message signal.  Then, subtract x[n] from s[n] to give the signal after noise reduction.
+For two long discrete signals, say a 10s signal with a sampling rate of 100kHz, each signal has 1 million samples.  For matrix T, that means a 1 million times 1 million size, which takes a huge amount of computational power.  The plan is to run this algorithm on an FPGA, which cannot handle this task.  Also, it is desired to have real-time output with low latency.  The wiener filter is very hard to achieve both high noise reduction rate and low latency since the filter needs a fair number of samples to work.
+In conclusion, the wiener filter is a good algorithm to start with.  however, it cannot suit all the requirements for this project, so modifications and other methods must be considered.
+
+\section{Photodiode working in zero-mode: detecting light power change with DC rejection and AC amplification}
+
+With the optrode system, the liquid crystal transducer modulates the nerve signal into the lights by changing the amount of light being reflected.  However, it only modulates a small portion of the light, which means the AC part of the light is far less than the DC part.  This may cause problems with the light receiver part of the system.
+A common way to use photodiode as light detector is to use it in photoconductive mode.  In photoconductive mode, the photodiode is reverse biased, which means the anode has been given a voltage lower than the cathode.  A transimpedance amplifier is connected to the cathode of a photodiode to convert and amplify the output current to a voltage signal.  This is a good choice when it is needed for the output signal relevant to illuminance.  However, when only the AC part is needed, and the AC part is very small compared to the DC part, this DC coupled detect-amplify circuit can be saturated without amplifying the circuit to a satisfactory level.  This means more noise is added to the signal, harder for AC coupled amplify, and worse performance for the noise reduction algorithm.
+In this paper, Yuan Wei and his team proposed a new mode to operate photodiodes \cite{zero-mode_detection}, which results in higher AC gain and lower noise.  This mode is called “zero mode”, and it forces the photodiode to operate at either zero voltage or zero current.  
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[scale=0.01]{zero_mode_sch.png}}
+\caption{zero mode with capacitor}
+\label{fig_zero_mode_sch}
+\end{figure}
+
+Figure 4 shows a proposed circuit design that the photodiode is working in zero-mode.  Experiments are done to measure the parameters of the photodiode in zero-mode, such as the saturation current, the ideality factor, the slope indicator, and the power to current conversion efficiency.  With these parameters, a small AC signal equivalent circuit can be derived.  The transfer function of this circuit indicates that it works as a bandpass filter, with the lower cut-off frequency depending on the photodiode capacitance Cj and capacitor C.  Large capacitor C is used so that the photodiode capacitance Cj can be ignored, and the filter characteristics can be calculated.  All the DC parts in the light will be filtered out by this bandpass filter as intended.
+The zero-mode design could have better noise performance than the conventional design.  For both designs to have the same output AC gain, the conventional design would need a second stage amplifier, while the zero-mode design only amplifies the AC part in the first stage.  Therefore, zero-mode design can have one less amplifier stage noise.  Even when comparing only the first stage, the zero-mode design still results in less noise.  The reverse dark current and power supply interference are caused by biasing the photodiode, which does not happen on zero-mode design.  Experiments are conducted and better noise performance for zero-mode is proved.
+In the experiment, the light circuit and data acquisition instrument are kept unchanged, while two circuit designs are tested under the same conditions.  With only one stage in both circuits, the photoconductive-mode design can achieve a maximum gain of 5.55 with 613uV input referred noise, while the zero-mode design achieves a maximum gain of 209.9 with only 24.3uV input referred noise.
+In conclusion, this zero-mode design can achieve better noise performance compared to the conventional photoconductive-mode design.  It can also achieve a higher gain in the first stage.  Therefore, from both noise and economic point view, it is a very good design choice for the light receiver circuit.
+
+\section{Active Noise Cancellation for In-Ear Headphones Implemented on FPGA}
+
+Reshma B proposed a hardware implementation of a headphone active noise cancellation algorithm on FPGA \cite{ANC_Headphone_3}.  The high-level design is basically a negative feedback control loop with inputs being reference microphone and error microphone, and output being sound data after noise reduction.  The feed back is connected to an adaptive filter that uses the FxLMS algorithm.  The coefficients are calculated by the previous coefficients, input data, and feedback error signal inside a weight update controller.  It keeps updating the coefficient until the error signal goes to zero.  Inside the adaptive filter, there are 24 filter taps.  There are results showing that after the 17h filter tap, the coefficients are very close to zero.  Also, a comparison was made showing that 24 filter taps and 60 filter taps achieve the exact same noise reduction ability, while 60 filter taps have 200\% more computational complexity.  Therefore, 24 is an appropriate number of filter taps that does not use too many resources but still maintains decent noise reduce ability.  A pipeline structure is also designed to reduce the hardware resources used.  As high frequency noise can be largely reduced by passive noise control, active noise cancellation only needs to work at lower frequencies, for instance, lower than 1kHz.  Modern FPGAs can run at around 100MHz frequency, which a lot faster than the required sound frequency.  In this case, 24 filter taps are being pipelined, which means for each sample period the filter is running 24 times to get 24 filter taps.  A single 24-Filter unit structure as well as the pipelined single-multiplier filter have been implemented to compare the resource utilization rate.  The result shows that the non-pipelined filter cost 77\% of slice LUTs and 425\% of bonded IOBs, and the pipelined filter cost 13\% of slice LUTs and 34\% of bonded IOBs.  It is not a 24 times difference since the pipelined filter is only part of the whole design.  However, it is still very significant as the non-pipelined design uses almost all the slice LUTs and 4 times the IO pins onboard, which means it is impossible to implement on the actual FPGA.
+It is mentioned in this paper that the algorithm focuses on frequencies under 1kHz.  This is not only because passive noise control can handle the high frequency noise, but also active noise cancellation hardware now cannot deal with high frequency very well.  The algorithm and hardware need time to capture, process, and output.  Which means there must be a time delay between the input noise and the output cancelling noise.  This time delay may cause only a small phase shift at lower frequencies, but it would be very serious at higher frequencies, which leads to a failure to cancel or even add more noise.  For this project, the required working frequency range is about the same as audible sound, but does not have a strict time delay requirement, which means similar hardware and algorithm should satisfy the requirements of this project.  The filter length result suggests that there is a filter tap number after which the noise reduction ability will not change.  The optrode system data shows that the noisy signal and noise signal are only correlated for about 7 samples, so it is safe to assume that the noise reduction ability would reach its maximum at 7 filter taps.  This paper also discussed pipeline techniques, which could be very useful in this project.  In this project, more data bits may be used for higher accuracy, which means a lot more resources will be taken.  By using a pipeline structure, hardware cost is being converted to time cost.  Since the FPGA runs at a much higher frequency than the signal of interest, it is safe to run multiple times within a sample period.
+
+\section{Ultra-stable, low-noise two-stage current source}
+
+An alternative way to reduce the noise from this system is to have a lower noise current source.  Many laser diodes used for many measurements are required to be low noise.  A large amount of the noise within the laser diodes is from the current sources that power them.  Grzegorz \cite{LowNoiseCurrentSource} presents a low noise two-stage current source design for laser usage.  This design creates very low noise output current by using a normal first stage source and feedback second stage source.  The result shows that at some output levels, the noise inside the output current is low enough that it will not have a significant impact on the laser \cite{LinewidthQuantumCascadeLaser}.  Therefore, this design is suitable to power some laser diodes for high performance measurement systems.
+This low noise current source design has two stages.  The first stage is a normal current source mainly made by a linear voltage regulator, and the output current can be adjusted by a trimmer.  The second stage is a negative feedback loop that provides much less amount of current than the first stage, but enough to compensate for the noise from the first stage.  The second stage consists of an amplifier, a voltage reference, and a comparator.  Both the current source outputs are connected to the anode of the laser diode, and a sense resistor is placed between the cathode of the laser diode and ground, the amplifier amplifies the voltage across the resistor, which is proportional to the laser diode current.  The amplifier output voltage is compared with a highly stable voltage reference, which is adjusted as to the desired output current.  When the amplifier output voltage is smaller than the voltage reference, that means the output current is smaller than the target current because of the noise from the first stage current source, the comparator output will turn on a MOSFET to increase the second stage current, which will compensate for the noise.  Therefore, a stable low noise current is created.
+Compare the current noise for the first stage source only and the two-stage source, at lower output of I = 200mA, the two-stage source has a noise level improvement by a factor of 10 across the frequency range from 0.1Hz to 100kHz.  However, at maximum output I = 1A, the two-stage source only improves in the frequency range from 0.1Hz to 100Hz, and it has more noise than the first stage in the frequency range from 100Hz to 100kHz.
+For the current noise measurement result, the two-stage source has equivalent current noise of 1.2nA/√Hz at I = 0.2A, 7.3nA/√Hz at I = 0.5A, 60nA/√Hz at I = 1A.
+At a lower output current of 0.2A, the 1.2nA/√Hz noise from the current source causes lower noise in the laser diode than the temperature caused noise \cite{LinewidthQuantumCascadeLaser}.  Therefore, there is no need to improve the performance at this output noise level.  However, at higher current output current levels, the noise level increases significantly.  From the spectral density result, higher current output increases the noise in the high frequency range, this might be caused by the feedback loop gain control and reaction speed, which cause the two-stage source to be less stable at higher frequencies.  One solution to this problem is to use a feedforward loop instead of a feedback loop.  By accurately sensing and calculating the noise from the first stage source, outputting this amount of current noise from the second stage source, adding both stage current and then outputting to the laser diode.  The difference between feedback and feedforward loop is that in feedforward loop, the current noise is compensated before the laser diode, and it is accurate feed, which is more stable at high frequency than the negative feedback.
+This current source is designed to have an adjustable output current.  However, the adjustment is made by tuning two trimmers according to two equations from the first and second stage sources.  As trimmers have no resistance mark, it is very hard to adjust them accurately.  Therefore, a microcontroller could be introduced to control the variable output current \cite{Du_2018}.  By using a microcontroller, both the speed and accuracy of setting the current output can be improved.  In the case of the feedforward loop, a microcontroller will be needed to calibrate the feedforward circuit gain to achieve better noise performance.
+The sense resistor in this design is placed between the cathode of the laser diode and the ground.  This may cause the voltage across the laser diode to change along with the noisy current, which causes noise and drift for the laser diode.  This problem happens because of the feedback loop.  By changing from a feedback loop to feedforward, the current is sensed before the laser diode, which means the sense resistor will be placed between the first stage source and the anode of the laser diode, and the cathode of the laser diode will be grounded.  The ground connection issue for the amplifier can be solved by a high side sensing circuit \cite{TI_2019}.
+In conclusion, Grzegorz presents a low noise current source design that achieves decent results of 1.2nA/√Hz noise at I = 0.2A output, which is approaching the limit of the noise performance improvement ability of the laser diode from the current source.  However, the current source noise performance at higher output currents is less satisfying.  The feedback loop has a performance impact on higher frequency noise.  Also, the output current value takes a long time to change.  His work informs my research in which a feedforward loop second stage current source will be implemented, and the whole source will be controlled by a microcontroller.
+
+
+
