@@ -1,2 +1,180 @@
-\chapter{Documentation}\label{a:documentation}
+\chapter[Appendix: b]{FPGA utilization report}\label{a:FPGA}
 
+% Please add the following required packages to your document preamble:
+% \usepackage{booktabs}
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+% \usepackage{lscape}
+% \usepackage{longtable}
+% Note: It may be necessary to compile the document several times to get a multi-page table to line up properly
+\begin{landscape}
+\tiny
+\begin{longtable}{@{}|l|l|l|l|l|l|l|l|l|@{}}
+\toprule
+\textbf{Name} & \textbf{Slice LUTs} & \textbf{Slice Registers} & \textbf{F7 Muxes} & \textbf{Slice} & \textbf{LUT as Logic} & \textbf{LUT as Memory} & \textbf{Block RAM Tile} & \textbf{DSPs} \\* \midrule
+\endhead
+%
+\rowcolor[HTML]{FFFFFF} 
+design\_1\_wrapper & 33571 & 4253 & 3 & 9414 & 33509 & 62 & 22 & 40 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+design\_1\_i & 33571 & 4253 & 3 & 9414 & 33509 & 62 & 22 & 40 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+SPI\_Master\_With\_Sing\_2 & 46 & 45 & 1 & 25 & 46 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+SPI\_Master\_With\_Sing\_1 & 46 & 49 & 1 & 25 & 46 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+SPI\_Master\_With\_Sing\_0 & 45 & 45 & 1 & 23 & 45 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+SPI\_ADC\_Read\_Loop\_1 & 71 & 130 & 0 & 77 & 71 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+SPI\_ADC\_Read\_Loop\_0 & 73 & 130 & 0 & 75 & 73 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+rst\_ps7\_0\_100M & 17 & 34 & 0 & 16 & 16 & 1 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+ps7\_0\_axi\_periph & 1714 & 1255 & 0 & 786 & 1653 & 61 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+processing\_system7\_0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+fifo\_generator\_1 & 85 & 92 & 0 & 64 & 85 & 0 & 11 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+fifo\_generator\_0 & 87 & 92 & 0 & 70 & 87 & 0 & 11 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+fifo\_buffer\_1 & 4 & 6 & 0 & 5 & 4 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+fifo\_buffer\_0 & 4 & 6 & 0 & 5 & 4 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+DSP\_Block\_0 & 30024 & 380 & 0 & 8088 & 30024 & 0 & 0 & 40 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+DSP\_64to24\_0 & 0 & 24 & 0 & 6 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+DSP\_2dot1V\_1 & 13 & 50 & 0 & 21 & 13 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+DSP\_2dot1V\_0 & 13 & 50 & 0 & 22 & 13 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_subtract\_0 & 32 & 0 & 0 & 8 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_minus1\_1 & 63 & 0 & 0 & 16 & 63 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_minus1\_0 & 63 & 0 & 0 & 16 & 63 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_64by64\_2 & 105 & 0 & 0 & 37 & 105 & 0 & 0 & 15 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_64by64\_1 & 32 & 0 & 0 & 9 & 32 & 0 & 0 & 10 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_64by64\_0 & 105 & 0 & 0 & 32 & 105 & 0 & 0 & 15 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_1\_1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_1\_0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_0dot9\_3 & 5110 & 0 & 0 & 1412 & 5110 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_0dot9\_2 & 5084 & 0 & 0 & 1392 & 5084 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_0dot9\_1 & 4764 & 0 & 0 & 1315 & 4764 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_multiply\_0dot9\_0 & 4762 & 0 & 0 & 1308 & 4762 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_divide\_64by64\_0 & 9502 & 0 & 0 & 2478 & 9502 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_delay\_5 & 0 & 64 & 0 & 16 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_delay\_3 & 0 & 64 & 0 & 16 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_delay\_1 & 0 & 64 & 0 & 16 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_delay\_0 & 0 & 64 & 0 & 16 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_adder\_5 & 64 & 0 & 0 & 16 & 64 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_adder\_4 & 64 & 0 & 0 & 16 & 64 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_adder\_3 & 64 & 0 & 0 & 16 & 64 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_adder\_2 & 60 & 0 & 0 & 16 & 60 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_adder\_1 & 64 & 0 & 0 & 16 & 64 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+bit64\_adder\_0 & 60 & 0 & 0 & 16 & 60 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+Debounce\_4bits\_0 & 15 & 20 & 0 & 13 & 15 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+Debounce\_2bits\_0 & 22 & 18 & 0 & 12 & 22 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+clock\_divider\_0 & 5 & 7 & 0 & 3 & 5 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+clk\_wiz\_0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_34 & 32 & 36 & 0 & 11 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_33 & 32 & 36 & 0 & 13 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_32 & 32 & 36 & 0 & 11 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_31 & 32 & 41 & 0 & 15 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_30 & 32 & 36 & 0 & 13 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_29 & 39 & 50 & 0 & 21 & 39 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_28 & 37 & 44 & 0 & 19 & 37 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_27 & 32 & 36 & 0 & 18 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_26 & 37 & 44 & 0 & 20 & 37 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_25 & 32 & 36 & 0 & 12 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_24 & 93 & 248 & 0 & 86 & 93 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_23 & 32 & 41 & 0 & 16 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_22 & 32 & 36 & 0 & 14 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_21 & 32 & 36 & 0 & 19 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_20 & 32 & 36 & 0 & 19 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_19 & 32 & 36 & 0 & 13 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_18 & 37 & 44 & 0 & 23 & 37 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_17 & 32 & 36 & 0 & 14 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_16 & 32 & 41 & 0 & 16 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_15 & 39 & 59 & 0 & 26 & 39 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_14 & 32 & 41 & 0 & 16 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_13 & 45 & 64 & 0 & 30 & 45 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_12 & 53 & 104 & 0 & 33 & 53 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_11 & 41 & 68 & 0 & 24 & 41 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_10 & 32 & 41 & 0 & 17 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_9 & 37 & 44 & 0 & 14 & 37 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_8 & 37 & 52 & 0 & 20 & 37 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_7 & 32 & 36 & 0 & 14 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_6 & 37 & 44 & 0 & 16 & 37 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_5 & 32 & 36 & 0 & 13 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_4 & 93 & 248 & 0 & 94 & 93 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_3 & 32 & 41 & 0 & 16 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_2 & 32 & 36 & 0 & 12 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_1 & 32 & 36 & 0 & 13 & 32 & 0 & 0 & 0 \\* \midrule
+\rowcolor[HTML]{FFFFFF} 
+axi\_gpio\_0 & 32 & 45 & 0 & 27 & 32 & 0 & 0 & 0 \\* \bottomrule
+\caption{FPGA utilization}
+\label{tab_FPGAUtilization}\\
+\end{longtable}
+\end{landscape}
