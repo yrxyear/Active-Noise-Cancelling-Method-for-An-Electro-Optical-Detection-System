@@ -116,29 +116,29 @@ The previous light receiver board was made for another project that is not relev
 
 \subsection{New light receiver board}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{4-ANC_Sys/ReceiverBoard.jpg}
 \caption{Receiver Board}
 \label{fig_ReceiverBoard}
 \end{figure}
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\linewidth]{4-ANC_Sys/ReceiverAmplifierBoardSchematic_23_5_2023.pdf}
-\caption{Receiver Board Schematic}
-\label{fig_sch}
-\end{figure}
-
 Fig.~\ref{fig_ReceiverBoard} and Fig.~\ref{fig_sch} depict the light receiver board developed in this work, together with the schematic of the light receiver board.  The PCB is designed using Altium Designer and manufactured at JLCPCB.
 
-The receiver board has two stages of power supplies.  The first stage Low-dropout (LDO) regulator (LT3045EMSE) converts an externally supplied voltage within a range of~\qty{7}{V} to~\qty{20}{V} down to \qty{6.2}{V}.  Since we need the whole board to have very low noise so it does not affect the noise reduction, this LDO is chosen because of ultra-low RMS Noise of 0.8µVRMS (10Hz to 100kHz), ultra-low Spot Noise of 2nV/√Hz at 10kHz, and ultra-high PSRR of 76dB at 1MHz.  To reduce interference and noise on the board, there are three second-stage LDOs (LT3045EMSE), two for analogue supply and one for digital supply, that all convert \qty{6.2}{V} to \qty{3.3}{V}.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\linewidth]{4-ANC_Sys/PowerSupSch.pdf}
+\caption{Voltage supply schematic}
+\label{fig_PowerSupSch}
+\end{figure}
 
-Light reflected by the optrode consists mainly of background (DC component) light while the neural signal appears as a small (typically less than 10\% in amplitude) perturbation (AC component). Since only the biopotential signal part of the reflected light is of interest, and that the signal needs to be amplified at least 120dB to outperform the previous board, the DC part of the light must be removed before amplification.  Therefore, the amplifiers are AC coupled via a large capacitor right after the photodiode. When the photodiode is configured in reverse-bias, the system suffers from large $1/f$ noise that comes from the LDO. Therefore, the photo-diode D1 is configured in ``zero-mode''~\cite{zero-mode_detection}.  In this mode, the sensitivity is reduced because of the absence of DC biasing, but the noise from the DC biasing power supply is also removed, which makes the overall signal-to-noise ratio advantageous.
+The receiver board has two stages of power supplies as shown in fig.~\ref{fig_PowerSupSch}.  The first stage Low-dropout (LDO) regulator (LT3045EMSE) converts an externally supplied voltage within a range of~\qty{7}{V} to~\qty{20}{V} down to \qty{6.2}{V}.  Since we need the whole board to have very low noise so it does not affect the noise reduction, this LDO is chosen because of ultra-low RMS Noise of \qty{0.8}{\mu VRMS} (\qty{10}{Hz} to \qty{100}{kHz}), ultra-low Spot Noise of \qty{2}{nV/\sqrthz} at \qty{10}{kHz}, and ultra-high PSRR of \qty{76}{dB} at \qty{1}{MHz}.  To reduce interference and noise on the board, there are three second-stage LDOs (LT3045EMSE), two for analogue supply and one for digital supply, that all convert \qty{6.2}{V} to \qty{3.3}{V}.  There is also a voltage reference chip that generates a \qty{2.1}{V} and a \qty{3.2}{V} reference voltage.
+
+Light reflected by the optrode consists mainly of background (DC component) light while the neural signal appears as a small (typically less than 10\% in amplitude) perturbation (AC component). Since only the biopotential signal part of the reflected light is of interest, and that the signal needs to be amplified at least \qty{120}{dB\Omega} to outperform the previous board, the DC part of the light must be removed before amplification.  Therefore, the amplifiers are AC coupled via a large capacitor right after the photodiode. When the photodiode is configured in reverse-bias, the system suffers from large $1/f$ noise that comes from the LDO. Therefore, the photo-diode D1 is configured in ``zero-mode''~\cite{zero-mode_detection}.  In this mode, the sensitivity is reduced because of the absence of DC biasing, but the noise from the DC biasing power supply is also removed, which makes the overall signal-to-noise ratio advantageous.
 
 Fig.~\ref{fig_ReceiverSch} shows one channel of the final circuit schematic of the receiver board.  Compared to the schematic in Altium Designer, it adds a capacitor $C3$ and the photodiode is configured to zero mode, which reason will be discussed later.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centerline{\includegraphics[scale=0.8]{4-ANC_Sys/ReceiverSch.pdf}}
 \caption{Schmatic for one channel on light receiver board.  The upper half is a photodiode and a two-stage amplifier, and the bottom half is a two-stage low-pass-filter and an ADC.}
 \label{fig_ReceiverSch}
@@ -148,7 +148,7 @@ In fig.~\ref{fig_ReceiverSch}, $U_1$ and $U_2$ (ADA4896) are two stages of ampli
 
 The output voltage $V_x$ from the two-stage amplifier is then put through an active fourth-order anti-aliasing low-pass filter, consisting of $U_3$ and $U_4$ (LT6233).  The cut-off frequency is set to~\qty{13}{kHz} for the balance of the remaining signal up to \qty{10}{kHz} and anti-aliasing at ADC sampling frequency of \qty{64}{kHz}. Finally, a~\qty{24}{bit} \qty{64}{kHz} analogue to digital converter (MAX11254) converts the amplified analogue signal into a digital signal and is sent to the FPGA board (Arty Z7) via an SPI port.  The MAX11254 is a 6-channel, 24-bit delta-sigma ADC with sample rates up to \qty{64}{ksps} and allows precision DC measurements. The MAX11254 communicates via an SPI serial interface and operates from a single \qty{2.7}{V} to \qty{3.6}{V} analog supply.  The DAQ in the existing optrode system samples at \qty{16}{bit} \qty{100}{kHz}.  The required working range for frequency is \qty{10}{Hz} to \qty{10}{kHz}, which means the minimum sampling rate of \qty{20}{kHz} is required.  Therefore, MAX11254 fits our requirements while the cost is still reasonable.  Since the amplifiers has a virtual ground of \qty{2.1}{V}, and a designed signal amplitude of \qty{1}{V} peak-peak, also factor in the bias current of the amplifier, so the ADC must be able to take in input voltage from \qty{0.1}{V} to \qty{3.1}{V}.  So we set the higher reference voltage in the ADC to \qty{3.2}{V}, and the lower voltage reference to ground, so it covers the whole signal voltage range, and also dropped \qty{0.1}{V} from the ADC power voltage so it can work properly.  The ADC will take a input from the circuits in the front and output a value between $1$ and $2^{24}$, to represent a voltage level between the reference voltages \qty{0}{V} and \qty{3.2}{V}.  Ideally, the receiver circuit and the FPGA should be integrated into one board for better SPI signal integrity and easier usage, but since the aim of this project is to proof the principle of active noise cancelling, we chose to use an FPGA development board to reduce the development time.  Arty Z7 board is chosen because it is fairly powerful, and it has microcontroller built in for easier implementation of functions that is hard to achieve in FPGA.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centerline{\includegraphics[scale=1]{4-ANC_Sys/SallenKeyLPF.pdf}}
 \caption{Schematic of a Sallen-Key topology low pass filter}
 \label{fig_SallenKeyLPF}
@@ -160,7 +160,14 @@ Then we can find out the \qty{3}{dB} frequency:
 $$f_c = \frac{1}{2\pi R \sqrt{C_1 C_2}}$$
 We want to place the pole as close to \qty{10}{kHz} as possible, so there is no aliasing happening in the analogue to digital converter, and also not affecting the recording data.  Therefore, we chose $R=\qty{10}{k\Omega}$, $C_1=\qty{1.6}{nF}$, and $C_2=\qty{1.3}{nF}$.  Then we get the \qty{3}{dB} cut-off frequency at \qty{11.04}{kHz}.  With two stages in cascade, the low-pass filter will have a total of fourth order, which means \qty{80}{dB} per decade roll-off.  The cut-off frequency will remain the same at \qty{11.04}{kHz}.
 
-A LTspice simulation of the light receiver board circuit is done to verify the circuit as shown in fig.~\ref{fig_LTspiceSim1} and fig.~\ref{fig_LTspiceSim2}.  Fig.~\ref{fig_LTspiceSim1} (a) and (b) show the circuit schematic of the two-stage amplifier and the simulation result of it.  A DC current source I1 and an AC current source I2 are used to simulate the behaviour of the photodiode since it is not included in the LTspice library and the manufacturer did not provide any simulation model.  The reverse-bias configuration is used here as it is the more conventional approach.  The rest of the circuits here are the same as the amplifier circuit in the PCB schematic.  Result shows that at \qty{10}{Hz} to \qty{10}{kHz}, the gain is constantly \qty{140}{dB\Omega}, and the lower \qty{3}{dB} frequency is at \qty{7.48}{Hz}, which is caused by the large AC coupling capacitor $C8$.  Fig.~\ref{fig_LTspiceSim2} (a) and (b) show the circuit schematic of the two-stage low-pass-filter and the simulation result of it.  The cut-off frequency is \qty{10.96}{kHz}, with a \qty{80}{dB} per decade roll-off, which matches the resistor and capacitor setting in the two-stage fourth-order active filter of \qty{11.04}{kHz}.  At the ADC working frequency \qty{64}{kHz}, the filter output is at \qty{-61.68}{dB}, which is sufficient for preventing aliasing.  When combining the two circuits, the output will have a bandwidth of \qty{10.96}{kHz}, starting at \qty{7.48}{Hz} and finishing at \qty{10.96}{kHz}, which suits the required working frequency (\qty{10}{Hz} to \qty{10}{kHz}) of the light receiver board.
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\linewidth]{4-ANC_Sys/ReceiverAmplifierBoardSchematic_23_5_2023.pdf}
+\caption{Receiver Board Schematic}
+\label{fig_sch}
+\end{figure}
+
+Fig.~\ref{fig_sch} shows the whole receiver schematic drawn in Altium Designer.  A LTspice simulation of the light receiver board circuit is done to verify the circuit as shown in fig.~\ref{fig_LTspiceSim1} and fig.~\ref{fig_LTspiceSim2}.  Fig.~\ref{fig_LTspiceSim1} (a) and (b) show the circuit schematic of the two-stage amplifier and the simulation result of it.  A DC current source I1 and an AC current source I2 are used to simulate the behaviour of the photodiode since it is not included in the LTspice library and the manufacturer did not provide any simulation model.  The reverse-bias configuration is used here as it is the more conventional approach.  The rest of the circuits here are the same as the amplifier circuit in the PCB schematic.  Result shows that at \qty{10}{Hz} to \qty{10}{kHz}, the gain is constantly \qty{140}{dB\Omega}, and the lower \qty{3}{dB} frequency is at \qty{7.48}{Hz}, which is caused by the large AC coupling capacitor $C8$.  Fig.~\ref{fig_LTspiceSim2} (a) and (b) show the circuit schematic of the two-stage low-pass-filter and the simulation result of it.  The cut-off frequency is \qty{10.96}{kHz}, with a \qty{80}{dB} per decade roll-off, which matches the resistor and capacitor setting in the two-stage fourth-order active filter of \qty{11.04}{kHz}.  At the ADC working frequency \qty{64}{kHz}, the filter output is at \qty{-61.68}{dB}, which is sufficient for preventing aliasing.  When combining the two circuits, the output will have a bandwidth of \qty{10.96}{kHz}, starting at \qty{7.48}{Hz} and finishing at \qty{10.96}{kHz}, which suits the required working frequency (\qty{10}{Hz} to \qty{10}{kHz}) of the light receiver board.
 
 \begin{figure}[H]
 \centering
@@ -285,7 +292,11 @@ Fig.~\ref{fig_BoardBandwidth} shows the gain at a few more frequency points.  Th
 
 
 
-\section{Development of the noise cancelling algorithm}
+\section{Development of the noise cancelling algorithm on FPGA}
+
+Applications such as brain-computer interfaces (BCIs), require arrays of hundreds of optrodes working together, with all processing done in real-time with FPGAs providing the best approach for such requirements.
+
+In this section, We used a Wiener filter~\cite{WienerFilter} for preliminary investigations on pre-recorded optrode data to verify the effectiveness of actively cancelling in a realistic setup. However, in general Wiener filters process part of the signal one bin at a time and require a large amount of computational resources when the bin size gets large.  From experimental data, the optrode system showed little correlation between data streams beyond 3 samples from zero lag. We also determined that a one-tap filter showed significant noise reduction while increasing the number of taps showed little improvement.  This is fortunate, as an algorithm that must process hundreds of channels in real time, needs to be simple and consume little power.  Therefore, a one-tap adaptive filter algorithm that is based on Wiener filtering has been designed and implemented on the FPGA board.
 
 \subsection{Wiener filter}
 
@@ -395,9 +406,11 @@ Fig.~\ref{fig_TestMeasurement} shows the result of running the MATLAB code above
 
 \subsection{Modifying Wiener filter}
 
-Now we have a working algorithm, we need to figure out how to meet the other two requirements: real-time processing, and easy to implement on FPGA.  In order to take real-time digital input sample by sample, we cannot use the whole data set, and it is not very simple to implement a moving bin algorithm on the FPGA.  Therefore, we decided to use a leaky integrator, so the weighting for each sample is at maximum when it first comes in, and gradually reduces by 0.01\% per sample.  At this rate, reducing each sample to about 5\% of the original value will require 29956 samples, which would be \qty{3}{s} at \qty{10}{kHz} sampling rate in this model (it has been down sampled from \qty{100}{kHz} to \qty{10}{kHz} to remove any noise sitting in the unwanted frequency band).  A high-pass filter is implemented to remove the effect of DC-level shifting.  The high-pass filter block has a transfer function of $H(z)=\frac{1-Z^{-1}}{1-0.9Z^{-1}}$, at \qty{10}{kHz} sampling frequency, the cut off frequency would be around \qty{151}{Hz}.  In eqn~\ref{eqn_WienerMatrix}, if we simplify the matrix to one sample length, the matrix will become to:
+\subsubsection{Modify to one filter tap}
 
-\begin{gather} \label{eqn_WienerMatrix_3}
+Now we have a working algorithm, we need to figure out how to meet the other two requirements: real-time processing, and easy to implement on FPGA.  In order to take real-time digital input sample by sample, we cannot use the whole data set, and it is not very simple to implement a moving bin algorithm on the FPGA.  Therefore, we decided to use a leaky integrator, so the weighting for each sample is at maximum when it first comes in, and gradually reduces by 0.01\% per sample.  At this rate, reducing each sample to about 5\% of the original value will require 29956 samples, which would be \qty{3}{s} at \qty{10}{kHz} sampling rate in this model (it has been downsampled from \qty{100}{kHz} to \qty{10}{kHz} to remove any noise sitting in the unwanted frequency band).  A high-pass filter is implemented to remove the effect of DC-level shifting.  The high-pass filter block has a transfer function of $H(z)=\frac{1-Z^{-1}}{1-0.9Z^{-1}}$, at \qty{10}{kHz} sampling frequency, the cut off frequency would be around \qty{151}{Hz}.  In eqn~\ref{eqn_WienerMatrix}, if we simplify the matrix to one sample length, the matrix will become:
+
+\begin{gather}
 \underbrace{
     \begin{bmatrix}
     R_w[0]
@@ -421,9 +434,93 @@ $$R_w[m]=E\{w[n]w[n+m]\}$$
 $$R_{ws}[m]=E\{w[n]s[n+m]\}$$
 
 When $m=0$, we can get:
-$$a_0 = \frac{E\{w[n]s[n]\}}{E\{w[n]w[n]\}}$$
+\begin{equation}
+\label{eqn_Wienera0}
+a_0 = \frac{E\{w[n]s[n]\}}{E\{w[n]w[n]\}}
+\end{equation}
 
-the filter coefficient $a$ is given by the cross-correlation of $w$ and $s$ divided by the auto-correlation of $w$.  We perform a similar process here by multiplying $NoisySignal$ and $Noise$ and integrating to get the cross-correlation, and multiplying $Noise$ by itself and integrating to get the auto-correlation, then dividing the cross-correlation to the auto-correlation to get the filter coefficient.  We multiply the $Noise$ signal by this filter coefficient to get the estimated $Noise$ signal that best matches the noise in $NoisySignal$.  Finally, subtract $NoisySignal$ by the estimated $Noise$ to get the active noise cancelling output.  This modified Wiener filter structure is constructed with Simulink and shown in fig.~\ref{fig_Simulink}.  The test result of this Simulink model using the same data input as the Wiener filter test is shown in fig.~\ref{fig_SimulinkResult}.  The blue signal is $NoisySignal$ at the input and the green signal is the output of the Simulink model.  The improvement is very close to the Wiener filter result in fig.~\ref{fig_TestMeasurement}, which proves this Simulink model is effective for reducing the noise in biomedical signals.
+\begin{figure}[H]
+\centerline{\includegraphics[width=0.5\linewidth]{4-ANC_Sys/ModifiedWiener.pdf}}
+\caption{Modified 1 tap wiener filter coefficient calculation block diagram}
+\label{fig_ModifiedWiener}
+\end{figure}
+
+From the equations above, we can draw a simple block diagram fig.~\ref{fig_ModifiedWiener}.  In eqn.~\ref{eqn_Wienera0}, the filter coefficient $a_0$ is given by the cross-correlation of $w$ and $s$ divided by the auto-correlation of $w$.  We perform a similar process here by multiplying $s[n]$ and $w[n]$ to get the cross-correlation $R_{ws}$, and multiplying $w[n]$ by itself to get the auto-correlation $R_w$, then dividing the cross-correlation to the auto-correlation to get the filter coefficient $a_0$.  After that, We can multiply the $w[n]$ signal by this filter coefficient to get the estimated $w[n]$ signal that best matches the noise in $s[n]$.  Finally, subtract $s[n]$ by the estimated $w[n]$ to get the active noise cancelling output.
+
+\subsubsection{Modify to two filter tap}  
+
+Now, if we try to get two filter taps, we can modify the matrix to:
+
+\begin{gather}
+\underbrace{
+    \begin{bmatrix}
+    R_w[0] & R_w[1]\\
+    R_w[1] & R_w[0]
+    \end{bmatrix}
+}_{T}
+\underbrace{
+    \begin{bmatrix}
+    a_0 \\
+    a_1
+    \end{bmatrix}
+}_{a}
+=
+\underbrace{
+    \begin{bmatrix}
+    R_{ws}[0] \\
+    R_{ws}[1]
+    \end{bmatrix}
+}_{v}
+\end{gather}
+
+And get the equation:
+$$R_w[0] \cdot a_0 + R_w[1] \cdot a_1 = R_{ws}[0]$$
+$$R_w[0] \cdot a_1 + R_w[1] \cdot a_0 = R_{ws}[1]$$
+
+Substitute $R_w[m]$ with $E\{w[n]w[n+m]\}$, and $R_{ws}[m]$ with $E\{w[n]s[n+m]\}$, and we can get:
+$$a_0 = \frac{R_w[0] \cdot R_{ws}[0] - R_w[1] \cdot R_{ws}[1]}{R_w[0]^2 - R_w[1]^2}$$
+$$a_1 = \frac{R_w[0] \cdot R_{ws}[1] - R_w[1] \cdot R_{ws}[0]}{R_w[0]^2 - R_w[1]^2}$$
+
+The calculation for $a_0$ and $a_1$ seems a lot more complicated than calculating just $a_0$ with one filter tap.  After trying the one filter tap algorithm in the FPGA, we decided that we would not be able to fit the two filter tap algorithm into the FPGA.  Therefore, only one tap algorithm is implemented on the FPGA.
+
+\subsubsection{Complete one filter tap algorithm}
+
+\begin{figure}[H]
+\centerline{\includegraphics[width=1\linewidth]{4-ANC_Sys/DSP.pdf}}
+\caption{Active noise cancelling algorithm block diagram.  It is an adaptive filter modified from the Wiener filter.}
+\label{fig_DSP}
+\end{figure}
+
+Fig.~\ref{fig_DSP} shows the implemented digital signal processing infrastructure.  We assume here that the transfer function $H_1$ is common to both signals and that the transfer functions $H_2$ are identical integrators.  The system as shown has two inputs $x_1(i)$ and $x_2(i)$ respectively and a single output $y(i)$.  $x_1(i)$ carries the noisy message signal while $x_2(i)$ carries the noise signal.  The system is trying to remove the part of the noise in $x_1(i)$ that is correlated to the noise in $x_2(i)$, so we can posit:
+$$x_1(i)=s(i)+n(i) \quad;\quad x_2(i)=m(i)+kn(i)$$
+Where $n(i)$ is the part of the noise assumed present and correlated in both $x_1(i)$ and $x_2(i)$, $s(i)$ is signal plus random noise in $x_1(i)$, $m(i)$ is random noise in $x_2(i)$, and $k$ is the scale factor.  All of $s(i)$, $n(i)$, and $m(i)$ are random signals and assumed to be uncorrelated to each other.
+
+Let $N$ be the total number of samples in $x_1(i)$ and $x_2(i)$.  Take $x_{cc}$, the cross-correlation of $x_1(i)$ and $x_2(i)$; and $x_{ac}$, the auto-correlation of $x_2(i)$, such that
+
+$$x_{cc}(i)=\displaystyle\sum_{i=1}^{N} x_1(i)x_2(i), x_{ac}(i)=\displaystyle\sum_{i=1}^{N} x_2(i)x_2(i)$$
+We divide the cross-correlation by the auto-correlation to get the filter coefficient:
+\begin{equation}
+\label{filterCoeff}
+    \frac{x_{cc}(i)}{x_{ac}(i)} =\frac{\displaystyle\sum_{i=1}^{N} \left(s(i)m(i)+ks(i)n(i)+n(i)m(i)+n^2(i)k\right)}{\displaystyle\sum_{i=1}^{N} \left(m^2(i)+k^2n^2(i)+2km(i)n(i)\right)}
+\end{equation}
+Now, since $s(i)$, $n(i)$, and $m(i)$ are uncorrelated, all their respective cross-correlations should be equal to zero. In addition experiment results show that $kn(i)$ is the dominant noise in $x_2$, which means: 
+$$
+\sum_{i=1}^{N} k^2n^2(i) \gg \sum_{i=1}^{N} m^2(i)
+$$
+and consequently Eqn.~\ref{filterCoeff} reduces to:
+$$
+\frac{x_{cc}(i)}{x_{ac}(i)}=\frac{\displaystyle\sum_{i=1}^{N} kn^2(i)}{\displaystyle\sum_{i=1}^{N} m^2(i) + \displaystyle\sum_{i=1}^{N} k^2n^2(i)} \approx \frac{1}{k} 
+$$
+From this we can obtain the output $y(i)$:
+\begin{align*}
+    y(i)&=x_1(i)-\frac{1}{k}x_2(i) \\
+    &=s(i)+n(i)-\frac{1}{k}m(i)-n(i)=s(i)-\frac{1}{k}m(i)
+\end{align*}
+Since $kn \gg m$, the noise level in $y$ is largely improved compared to $x_1(i)$.
+
+To make the system more practical, a high-pass filter $H_1$ is implemented to remove any DC offset in the signals to improve cross-correlation and auto-correlation results.  A leaky integrator $H_2$ is used so the system has a moving average to track the most recent signal (in our case for about \qty{500}{ms}).  This leaky integrator compensates for the potential changes in the gain of $x_1(i)$ and $x_2(i)$ caused by {\em e.g.} temperature change or physical movement.
+
+This modified Wiener filter structure is constructed with Simulink and shown in fig.~\ref{fig_Simulink}.  The test result of this Simulink model using the same data input as the Wiener filter test is shown in fig.~\ref{fig_SimulinkResult}.  The blue signal is $NoisySignal$ at the input and the green signal is the output of the Simulink model.  The improvement is very close to the Wiener filter result in fig.~\ref{fig_TestMeasurement}, which proves this Simulink model is effective for reducing the noise in biomedical signals.
 
 \begin{figure}[h]
 \centering
@@ -438,6 +535,7 @@ the filter coefficient $a$ is given by the cross-correlation of $w$ and $s$ divi
 \caption{Simulink DSP Result}
 \label{fig_SimulinkResult}
 \end{figure}
+
 
 \subsection{Verilog HDL implementation}
 
@@ -513,49 +611,7 @@ In fig.~\ref{fig_VivadoSimResult}, the peak value is around 20, while in fig.~\r
 \end{figure}
 
 
-
-\subsection{DSP block}
-
-
-
-Applications such as brain-computer interfaces (BCIs), require arrays of hundreds of optrodes working together, with all processing done in real-time with FPGAs providing the best approach for such requirements.
-
-We used a Wiener filter~\cite{WienerFilter} for preliminary investigations on pre-recorded optrode data to verify the effectiveness of actively cancelling in a realistic setup. However, in general Wiener filters process part of the signal one bin at a time and require a large amount of computational resources when the bin size gets large.  From experimental data, the optrode system showed little correlation between data streams beyond 3 samples from zero lag. We also determined that a one-tap filter showed significant noise reduction while increasing the number of taps showed little improvement.  This is fortunate, as an algorithm that must process hundreds of channels in real time, need to be simple and consume little power.  Therefore, a one-tap adaptive filter algorithm that is based on Wiener filtering has been designed and implemented on the FPGA board.
-
-\begin{figure}[h]
-\centerline{\includegraphics[width=1\linewidth]{4-ANC_Sys/DSP.pdf}}
-\caption{Active noise cancelling algorithm block diagram.  It is an adaptive filter modified from the Wiener filter.}
-\label{fig_DSP}
-\end{figure}
-
-Fig.~\ref{fig_DSP} shows the implemented digital signal processing infrastructure.  We assume here that the transfer function $H_1$ is common to both signals and that the transfer functions $H_2$ are identical integrators.  The system as shown has two inputs $x_1(i)$ and $x_2(i)$ respectively and a single output $y(i)$.  $x_1(i)$ carries the noisy message signal while $x_2(i)$ carries the noise signal.  The system is trying to remove the part of the noise in $x_1(i)$ that is correlated to the noise in $x_2(i)$, so we can posit:
-$$x_1(i)=s(i)+n(i) \quad;\quad x_2(i)=m(i)+kn(i)$$
-Where $n(i)$ is the part of the noise assumed present and correlated in both $x_1(i)$ and $x_2(i)$, $s(i)$ is signal plus random noise in $x_1(i)$, $m(i)$ is random noise in $x_2(i)$, and $k$ is the scale factor.  All of $s(i)$, $n(i)$, and $m(i)$ are random signals and assumed to be uncorrelated to each other.
-
-Let $N$ be the total number of samples in $x_1(i)$ and $x_2(i)$.  Take $x_{cc}$, the cross-correlation of $x_1(i)$ and $x_2(i)$; and $x_{ac}$, the auto-correlation of $x_2(i)$, such that
-
-$$x_{cc}(i)=\displaystyle\sum_{i=1}^{N} x_1(i)x_2(i), x_{ac}(i)=\displaystyle\sum_{i=1}^{N} x_2(i)x_2(i)$$
-We divide the cross-correlation by the auto-correlation to get the filter coefficient:
-\begin{equation}
-\label{filterCoeff}
-    \frac{x_{cc}(i)}{x_{ac}(i)} =\frac{\displaystyle\sum_{i=1}^{N} \left(s(i)m(i)+ks(i)n(i)+n(i)m(i)+n^2(i)k\right)}{\displaystyle\sum_{i=1}^{N} \left(m^2(i)+k^2n^2(i)+2km(i)n(i)\right)}
-\end{equation}
-Now, since $s(i)$, $n(i)$, and $m(i)$ are uncorrelated, all their respective cross-correlations should be equal to zero. In addition experiment results show that $kn(i)$ is the dominant noise in $x_2$, which means: 
-$$
-\sum_{i=1}^{N} k^2n^2(i) \gg \sum_{i=1}^{N} m^2(i)
-$$
-and consequently Eqn.~\ref{filterCoeff} reduces to:
-$$
-\frac{x_{cc}(i)}{x_{ac}(i)}=\frac{\displaystyle\sum_{i=1}^{N} kn^2(i)}{\displaystyle\sum_{i=1}^{N} m^2(i) + \displaystyle\sum_{i=1}^{N} k^2n^2(i)} \approx \frac{1}{k} 
-$$
-From this we can obtain the output $y(i)$:
-\begin{align*}
-    y(i)&=x_1(i)-\frac{1}{k}x_2(i) \\
-    &=s(i)+n(i)-\frac{1}{k}m(i)-n(i)=s(i)-\frac{1}{k}m(i)
-\end{align*}
-Since $kn \gg m$, the noise level in $y$ is largely improved compared to $x_1(i)$.
-
-To make the system more practical, a high-pass filter $H_1$ is implemented to remove any DC offset in the signals to improve cross-correlation and auto-correlation results.  A leaky integrator $H_2$ is used so the system has a moving average to track the most recent signal (in our case for about \qty{500}{ms}).  This leaky integrator compensates for the potential changes in the gain of $x_1(i)$ and $x_2(i)$ caused by {\em e.g.} temperature change or physical movement.
+\subsection{Data flow}
 
 \begin{figure*}[h]
 \centerline{\includegraphics[width=1\linewidth]{4-ANC_Sys/DataFlow.pdf}}
@@ -566,6 +622,7 @@ To make the system more practical, a high-pass filter $H_1$ is implemented to re
 Fig.~\ref{fig_DataFlow} shows the data flows as currently implemented.  Light comes out of a light source and is split into two identical signals at the passive light splitter.  Then one signal goes to the active optrode where it measures a nerve signal, and the other signal goes to an inactive optrode and carries no extra information.  Both signals are converted into current by the photodiode, then converted into voltage by the amplifier, and finally converted into digital signals by the ADC, which all happen on the light receiver board.  Finally, the digital signals are transmitted to the FPGA for digital signal processing.
 
 In our case, the light source is a super-luminescent diode with a \qty{1550}{\nm} wavelength, and a variable current of up to \qty{800}{\mA}, running at a constant temperature of \qty{20}{\degreeCelsius}.  The frequency range of the nerve signal is \qty{10}{\Hz} to \qty{10}{\kHz}.  The light receiver board gain is set to \qty{140}{dB\Omega} for all the measurements.  The USB serial port embedded in the FPGA board can only stream the data to a PC at 300Hz, which does not meet the requirement.  However, it is capable to stream out real-time data at \qty{64}{kHz} with suitable peripherals.  In this project, an SD card is used to store data to save development time.
+
 
 \subsection{FPGA}
 

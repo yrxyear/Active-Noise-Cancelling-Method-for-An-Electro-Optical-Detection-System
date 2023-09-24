@@ -12,6 +12,7 @@ For the digital signal processing algorithm to work correctly, the noise in the 
 
 \section{Noise comparison}
 
+Fig.~\ref{fig_500mA Signal_a} shows the captured, digitised signals before (``Active Optrode'') and after (``Noise-Cancelling Output'') the noise cancelling process is applied when the optrode input is shorted.  The Active Optrode channel clearly has a substantially larger amplitude than the Noise Cancelling Output channel.  However, these two signals still have a normalised cross-correlation of 0.4, implying there is still room to improve the performance. In fig.~\ref{fig_500mA Signal_b}, a large \qty{200}{mV} sinusoidal signal is applied to the optrode.  Again, the Noise Cancelling Output channel has substantially less noise than the Active Optrode channel, confirming that the algorithm is working in the case of sinusoidal signals, even when these are much larger than the noise level.  Fig.~\ref{fig_500mA Signal_c} shows a small \qty{10}{mV} sinusoidal signal applied to the optrode.  The blue active optrode channel looks like a random signal with some high frequency noise, while the red noise cancelling output channel shows a clear periodic signal at \qty{1}{kHz}.  Although the noise cancelling output channel still has a lot of high frequency noise, it shows the ability to recover small amplitude signals from noisy active optrode channel.
 
 \begin{figure}
 \centering
@@ -37,7 +38,15 @@ For the digital signal processing algorithm to work correctly, the noise in the 
 \label{fig_500mA Signal}
 \end{figure}
 
-Fig.~\ref{fig_500mA Signal_a} shows the captured, digitised signals before (``Active Optrode'') and after (``Noise-Cancelling Output'') the noise cancelling process is applied when the optrode input is shorted.  The Active Optrode channel clearly has a substantially larger amplitude than the Noise Cancelling Output channel.  However, these two signals still have a normalised cross-correlation of 0.4, implying there is still room to improve the performance. In fig.~\ref{fig_500mA Signal_b}, a large \qty{200}{mV} sinusoidal signal is applied to the optrode.  Again, the Noise Cancelling Output channel has substantially less noise than the Active Optrode channel, confirming that the algorithm is working in the case of sinusoidal signals, even when these are much larger than the noise level.  Fig.~\ref{fig_500mA Signal_c} shows a small \qty{10}{mV} sinusoidal signal applid to the optrode.  The blue active optrode channel looks like a ramdon signal with some high frequency noise, while the red noise cancelling output channel shows a clear periodic signal at \qty{1}{kHz}.  Although the noise cancelling output channel still has a lot of high frequency noise, it shows the ability to recover small amplitude signals from noisy active optrode channel.
+\begin{landscape}\centering
+\begin{figure}[h]
+\centerline{\includegraphics[width=\linewidth]{5-Experiment/SimCardiac.pdf}}
+\caption{\qty{500}{\mA} light source current with \qty{100}{\mV} peak to peak simulated cardiac input signal at the active optrode}
+\label{fig_SimCardiac}
+\end{figure}
+\end{landscape}
+
+Fig.~\ref{fig_SimCardiac} shows a simulated \qty{100}{mV} cardiac signal applied to the optrode.  This signal is similar to the cardiac signal measure from the existing optrode system that is used in Wiener filter testing (Although at a different frequency).  Compared to the blue active optrode channel, the red noise cancelling output channel shows a smoother spike and lower random noise.  
 
 Fig.~\ref{fig_RMS value for ch1 and DSP output} shows the comparison between the root mean square (RMS) value for the Active Optrode channel and the Noise Cancelling Output channel for different light source currents when no voltage is applied on the optrode.  The RMS value of the Active Optrode channel (blue bars) raises when the light source current is increased showing an approximate linear relationship between the noise in the channel and the light source drive current. Similarly, the red bars show the RMS value of the Noise Cancelling Output channel. 
 
