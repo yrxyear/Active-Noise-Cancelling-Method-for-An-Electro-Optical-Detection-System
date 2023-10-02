@@ -260,10 +260,10 @@
         Thesis/Dissertation Sheet}
     \end{center}
     
-    Surname or Family name: {\small\bfseries Lastname}
+    Surname or Family name: {\small\bfseries Yang}
     
-    First name: {\small\bfseries Firstname}\hspace{10mm}
-    Other name/s: {\small\bfseries Othernames}
+    First name: {\small\bfseries Ruixing}\hspace{10mm}
+    Other name/s: {\small\bfseries }
     
     Abbreviation for degree as given in the University calendar:
     {\small\bfseries \ThesisAbbreviatedDegreeString}
@@ -283,7 +283,12 @@
     \end{center}
     \vspace{-3ex}
 
-Abstract
+An optical-electrode or "Optrode" is a recently developed nerve signal detection device. Optrodes are used in electro-optical detection systems to convert nerve signals into light signals. Compared to conventional electrode detection systems, this system has the advantages of lower electrical interference, low signal attenuation, and small volume. However, the current electro-optical systems' output noise levels are much higher compare to conventional electrode systems. This means it is harder to observe nerve activity, especially when the amplitude is small. Noise in the optrode system is mainly produced by the light source, which suggests the possibility of active noise canceling.
+
+An active noise canceling method for the electro-optical detection system for better detection results is proposed in this project. By using a light splitter at the output of the light source, two channels of light that contain almost identical noise can be formed. By connecting the exact same optrode sensing circuit to the two channels, the noise output of the two channels is very similar. Then, by applying a nerve signal to the optrode in one channel and a zero signal to the optrode in the other channel, we get one channel to output a combination of noise and nerve signals, and the other channel to output only noise. By converting the light signals into digital signals and applying a suitable digital signal processing algorithm, the noise can be largely removed and a clean nerve signal can be recovered.
+
+In this project, a light receiver board which converts and amplifies two channels of light to digital signals has been designed, constructed and tested.  The digitised signals from the light receiver board receiver board are passed to an FPGA development board on which an adaptive filter algorithm has been implemented to actively cancel the noise. Experiments were conducted to test the system noise floor, and the system's responses to sine wave signals and simulated cardiac signals applied to the active optrode. Results show up to a 50\% reduction of the receiver system's noise floor when the active noise cancelling was activated, thus the ability to recover very low amplitude signals.  It can also reduce the artifact caused by moving the system physically.
+
 
   \end{minipage}
   \vrule width 0mm depth 140mm\relax % force box to be at least 140mm high
@@ -300,11 +305,11 @@ For any substantial portions of copyright material used in this thesis, written 
 \vspace*{10mm}
 
 \hfil
-Signature {\bfseries Firstname Lastname}
+Signature {\bfseries Ruixing Yang}
 \hfil\hfil\hfil
 Witness {\bfseries }
 \hfil\hfil\hfil
-Date {\bfseries 17 November, 2020}
+Date {\bfseries 8 October, 2023}
 \hfil
 
 % The University recognises that there may be exceptional circumstances
@@ -342,7 +347,7 @@ Date {\bfseries 17 November, 2020}
 \vskip 8em%
 \begin{flushright}
 {\bf \ThesisAuthor}\\
-17 November, 2020
+8 October, 2023
 \end{flushright}
 \vfil
 \clearemptydoublepage
@@ -361,7 +366,7 @@ For any substantial portions of copyright material used in this thesis, written 
 \vskip 10ex%
 \begin{flushright}
 {\bf \ThesisAuthor}\\
-17 November, 2020
+8 October, 2023
 \end{flushright}
 \vfill
 
@@ -372,7 +377,7 @@ For any substantial portions of copyright material used in this thesis, written 
 \vskip 10ex%
 \begin{flushright}
 {\bf \ThesisAuthor}\\
-17 November, 2020
+8 October, 2023
 \end{flushright}
 \clearemptydoublepage
 \endtitlepage
