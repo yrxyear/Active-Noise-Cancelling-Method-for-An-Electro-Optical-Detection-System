@@ -2,4 +2,8 @@
 
 \subsection{Future work}
 
-To be able to work with an optrode array with hundreds of channels, the filter implementation needs to be optimised such that hundreds of filter channels can fit in the processing unit.  Alternatively, while our design focus has been for multiple-optrode arrays, the proposed method is equally applicable in systems with few optrodes;  for such systems, filter resource use is of less concern and a more complex filter algorithm with more taps can be designed to achieve the full potential of active noise cancelling~\cite{ANCHeadphone}.
+To be able to work with an optrode array with hundreds of channels, the filter implementation needs to be optimised by reducing the resolution in the algorithm (just enough for subsequent usage), or time-share resources, so that hundreds of filter channels can fit in the processing unit.  Alternatively, while our design focus has been on multiple-optrode arrays, the proposed method is equally applicable in systems with few optrodes;  for such systems, filter resource use is of less concern and a more complex filter algorithm with more taps can be designed to achieve the full potential of active noise cancelling~\cite{ANCHeadphone}.
+
+\subsection{Conclusion}
+
+In this project, we demonstrate experimentally for the first time an active noise cancelling technique in an optrode detection system. This system uses an active optrode to record signals and an inactive optrode to estimate noise. A light receiver board is designed and assembled that converts the two channels of light into digital signals, and an adaptive digital filter is designed and run on an FPGA board that is used to reduce the noise in the signal channel. The system reduces the noise in the optrode system by up to 50\% and is capable of reducing artifacts from physical movements.
